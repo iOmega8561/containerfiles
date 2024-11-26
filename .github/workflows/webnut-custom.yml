@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file webnut-custom/Containerfile --tag webnut-custom:$(date +%s)
+      run: cd webnut-custom && docker build . --file Containerfile --tag webnut-custom:$(date +%s)

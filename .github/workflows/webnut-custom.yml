@@ -13,6 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up Docker
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # Step 3: Build the image
     - name: Build the Docker image
-      run: cd webnut-custom && docker build . --file Containerfile --tag webnut-custom:$(date +%s)
+      run: cd webnut-custom && docker build -t ghcr.io/${{ github.repository }}/webnut:latest . --file Containerfile
+
+    # Step 4: Push the Docker image
+    - name: Push Docker Image
+      run: docker push ghcr.io/${{ github.repository }}/webnut:latest

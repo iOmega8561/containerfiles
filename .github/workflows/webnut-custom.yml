@@ -28,9 +28,11 @@ jobs:
     # Step 3: Build the image
     - name: Build the Docker image
       run: |
-        cd webnut-custom && docker build -t ghcr.io/${{ github.actor }}/webnut:latest . --file Containerfile
+        REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        cd webnut-custom && docker build -t ghcr.io/$REPO_NAME/webnut:latest . --file Containerfile
 
     # Step 4: Push the Docker image
     - name: Push Docker Image
       run: |
-        docker push ghcr.io/${{ github.actor }}/webnut:latest
+        REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        docker push ghcr.io/$REPO_NAME/webnut:latest

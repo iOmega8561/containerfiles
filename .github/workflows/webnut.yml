@@ -1,20 +1,18 @@
-name: webnut-custom
+name: webnut
 
 on:
   push:
     branches:
       - master
     paths:
-      - webnut-custom/**
-    paths-ignore:
-      - webnut-custom/README.md
+      - webnut/**
+      - '!webnut/README.md'
   pull_request:
     branches:
       - master
     paths:
-      - webnut-custom/**
-    paths-ignore:
-      - webnut-custom/README.md
+      - webnut/**
+      - '!webnut/README.md'
 
 jobs:
 
@@ -39,7 +37,7 @@ jobs:
     - name: Build the Docker image
       run: |
         REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
-        cd webnut-custom && docker build -t ghcr.io/$REPO_NAME/webnut:latest . --file Containerfile
+        cd webnut && docker build -t ghcr.io/$REPO_NAME/webnut:latest . --file Containerfile
 
     # Step 4: Push the Docker image
     - name: Push Docker Image

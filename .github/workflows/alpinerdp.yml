@@ -1,0 +1,53 @@
+name: alpinerdp
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - alpinerdp/**
+      - '!alpinerdp/README.md'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - alpinerdp/**
+      - '!alpinerdp/README.md'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up Docker
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # Step 3: Build the image for xfce4 flavour
+    - name: Build the XFCE4 flavoured Docker image
+      run: |
+        REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        cd alpinerdp && docker build --target XFCE4 --tag ghcr.io/$REPO_NAME/alpinerdp:xfce4 . --file Containerfile
+
+    # Step 3.1: Build the image for Openbox flavour
+    - name: Build the Openbox flavoured Docker image
+      run: |
+        REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        cd alpinerdp && docker build --target OPENBOX --tag ghcr.io/$REPO_NAME/alpinerdp:openbox . --file Containerfile
+
+    # Step 4: Push the Docker images
+    - name: Push Docker Image
+      run: |
+        REPO_NAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        docker push ghcr.io/$REPO_NAME/alpinerdp:xfce4
+        docker push ghcr.io/$REPO_NAME/alpinerdp:openbox
